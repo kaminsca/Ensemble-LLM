@@ -1,29 +1,30 @@
 delim = "%@%"
 num_train = 3000 # stratify test set to get fair training data
+num_dev = 1000
 # we don't need to stratify dev and test
 
 dev_files = [
-    "data/aquarat_processed/dev.csv",
-    "data/arc_processed/ARC-Dev.csv",
-    "data/casehold_processed/val.csv",
-    "data/codeQA_processed/dev.csv",
-    "data/coqa_processed/coqa-dev.csv"
+    "data/processed/aquarat_processed/dev.csv",
+    "data/processed/arc_processed/ARC-Dev.csv",
+    "data/processed/casehold_processed/val.csv",
+    "data/processed/codeQA_processed/dev.csv",
+    "data/processed/coqa_processed/coqa-dev.csv"
 ]
 
 train_files = [
-    "data/aquarat_processed/train.csv",
-    "data/arc_processed/ARC-Train.csv",
-    "data/casehold_processed/train.csv",
-    "data/codeQA_processed/train.csv",
-    "data/coqa_processed/coqa-train.csv"
+    "data/processed/aquarat_processed/train.csv",
+    "data/processed/arc_processed/ARC-Train.csv",
+    "data/processed/casehold_processed/train.csv",
+    "data/processed/codeQA_processed/train.csv",
+    "data/processed/coqa_processed/coqa-train.csv"
 ]
 
 test_files = [
-    "data/aquarat_processed/test.csv",
-    "data/arc_processed/ARC-Test.csv",
-    "data/casehold_processed/test.csv",
-    "data/codeQA_processed/test.csv",
-    "data/coqa_processed/coqa-test.csv"
+    "data/processed/aquarat_processed/test.csv",
+    "data/processed/arc_processed/ARC-Test.csv",
+    "data/processed/casehold_processed/test.csv",
+    "data/processed/codeQA_processed/test.csv",
+    "data/processed/coqa_processed/coqa-test.csv"
 ]
 
 
@@ -37,7 +38,7 @@ train_data = [item for sublist in train_data for item in sublist]
 
 # val
 val_data = [open(f, "r").read().strip() for f in dev_files]
-val_data = [d.split("\n") for d in val_data]
+val_data = [d.split("\n")[:num_dev] for d in val_data]
 val_data = [[d.split(delim) for d in dataset] for dataset in val_data]
 val_data = [item for sublist in val_data for item in sublist]
 
