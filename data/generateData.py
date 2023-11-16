@@ -1,7 +1,7 @@
 delim = "%@%"
 num_train = 3000 # stratify test set to get fair training data
 num_dev = 1000
-# we don't need to stratify dev and test
+num_test = 250
 
 dev_files = [
     "data/processed/aquarat_processed/dev.csv",
@@ -44,7 +44,7 @@ val_data = [item for sublist in val_data for item in sublist]
 
 # test
 test_data = [open(f, "r").read().strip() for f in test_files]
-test_data = [d.split("\n") for d in test_data]
+test_data = [d.split("\n")[:num_test] for d in test_data]
 test_data = [[d.split(delim) for d in dataset] for dataset in test_data]
 test_data = [item for sublist in test_data for item in sublist]
 
