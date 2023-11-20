@@ -43,7 +43,7 @@ def process(raw, processed, filenames):
 
                 # reader = csv.reader(f)
                 # next(reader)
-                # f2.write("question, label\n")
+                # f2.write(f"question{delim} label\n")
                 # for row in reader:
                 #     #casehold
                 #     #f2.write(f'{row[1]}{delim}LAW\n')

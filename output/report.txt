@@ -1,0 +1,30 @@
+epoch 1 training accuracy: 0.3085333333333333
+epoch 1 validation accuracy: 0.5316517099199612
+
+epoch 2 training accuracy: 0.40386666666666665
+epoch 2 validation accuracy: 0.5047295658501092
+
+epoch 3 training accuracy: 0.608
+epoch 3 validation accuracy: 0.43439243269463984
+
+epoch 4 training accuracy: 0.6321333333333333
+epoch 4 validation accuracy: 0.645888915837982
+
+epoch 5 training accuracy: 0.7754
+epoch 5 validation accuracy: 0.6810574824157167
+
+epoch 6 training accuracy: 0.4704
+epoch 6 validation accuracy: 0.7846228474411836
+
+epoch 7 training accuracy: 0.7116666666666667
+epoch 7 validation accuracy: 0.5350472956585011
+
+epoch 8 training accuracy: 0.769
+epoch 8 validation accuracy: 0.6856657773465923
+
+epoch 9 training accuracy: 0.5646
+epoch 9 validation accuracy: 0.5214649527043415
+
+epoch 10 training accuracy: 0.5889333333333333
+epoch 10 validation accuracy: 0.38758185787048266
+
