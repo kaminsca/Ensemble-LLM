@@ -6,9 +6,11 @@ import argparse
 from sklearn.decomposition import TruncatedSVD
 import gensim.downloader as api
 import torch
-from sklearn.metrics import accuracy_score
+import sklearn.metrics as metrics
 from tqdm import tqdm
 import re
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 np.random.seed(42)
 delim = '%@%'
@@ -115,6 +117,18 @@ def create_tensors(input, dict): # create numerical tensor from sentence or tags
         return torch.tensor([dict[word] if word in dict else dict["unka"] for word in tokenize(line)])
     return [create_tensor_helper(line, dict) for line in input]
 
+def plot_acc(train_acc, val_acc, test_acc):
+    plt.figure()
+    plt.plot(range(1, len(train_acc)+1), train_acc, label='Train')
+    plt.plot(range(1, len(train_acc)+1), val_acc, label='Validation')
+    plt.plot(range(1, len(train_acc)+1), [test_acc] * len(train_acc), label='Test', linestyle='--')
+    plt.xticks(range(1, len(train_acc)+1))
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
+    plt.title('Accuracy by Epoch')
+    plt.legend()
+    plt.savefig('output/accuracy_by_epoch.png')
+
 def train(params):
 
     print('intializing...')
@@ -125,7 +139,7 @@ def train(params):
     train_labels = encode_labels(train_labels)
 
     model = RNN(args.embed_dim, args.hidden_dim, len(word2idx))
-    OPTIMIZER = torch.optim.SGD(model.parameters(), lr=params.lr)
+    OPTIMIZER = torch.optim.SGD(model.parameters(), lr=params.lr, weight_decay=0.001, momentum=0.9)
     model.embed(word2idx, params.embed_dim)
 
     validation_data, validation_labels = load_data('val')
@@ -138,6 +152,11 @@ def train(params):
     best_validation_score = 0
     pbar_total = tqdm(total=len(train_data)*params.epochs, leave=False)
     pbar_total.set_description('total training progress')
+    
+    val_label_data = []
+    train_acc = []
+    val_acc = []
+
     for epoch in range(params.epochs):
         pbar = tqdm(total=len(train_data), leave=False)
         pbar.set_description(f'epoch {epoch+1}')
@@ -152,9 +171,12 @@ def train(params):
             pbar_total.update(1)
             correct_guesses += int(torch.argmax(out) == label)
         pbar.close()
-        outfile.write(f'epoch {epoch+1} training accuracy: {correct_guesses / len(train_data)}\n')
-        validation_score = validate(model, word2idx, validation_data, validation_labels)
-        outfile.write(f'epoch {epoch+1} validation accuracy: {validation_score}\n')
+        train_acc.append(correct_guesses / len(train_data))
+        outfile.write(f'Epoch {epoch+1} training accuracy: {correct_guesses / len(train_data)}\n')
+        validation_score, validation_by_label = validate(model, word2idx, validation_data, validation_labels)
+        val_label_data.append(validation_by_label)
+        val_acc.append(validation_score)
+        outfile.write(f'Epoch {epoch+1} validation accuracy: {validation_score}\n')
         if validation_score > best_validation_score:
             best_validation_score = validation_score
             torch.save(model, 'output/model.torch')
@@ -163,9 +185,19 @@ def train(params):
     pbar_total.close()
     outfile.close()
 
+    # plot validation accuracy by label
+    for l in range(len(labels_encoding.keys())):
+        plt.plot(range(1, params.epochs+1), [val_label_data[i][l] for i in range(len(val_label_data))])
+    plt.legend(labels_encoding.keys())
+    plt.xticks(range(1, params.epochs+1))
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
+    plt.title('Validation Accuracy by Label')
+    plt.savefig('output/validation_by_label.png')
+
     model = torch.load('output/model.torch')
     print('done training')
-    return model, word2idx
+    return model, word2idx, train_acc, val_acc
 
 def validate(model, word2idx, data, labels):
     if word2idx is None or data is None or labels is None:
@@ -179,45 +211,63 @@ def validate(model, word2idx, data, labels):
     correct_guesses = 0
     val_bar = tqdm(total=len(data), leave=False)
     val_bar.set_description('validating')
+    guess_by_label = [0] * len(labels_encoding.keys())
     for question, label in zip(data, labels):
         with torch.no_grad():
             out = model(question)
-        correct_guesses += int(torch.argmax(out) == label)
+        pred = torch.argmax(out)
+        correct_guesses += int(pred == label)
+        guess_by_label[label] += int(pred == label)
         val_bar.update(1)
     val_bar.close()
-    return correct_guesses / len(data)
+
+    for l in range(len(guess_by_label)):
+        guess_by_label[l] /= np.count_nonzero(labels == l)    
+
+    return correct_guesses / len(data), guess_by_label
 
 def test(model, word2idx):
     if word2idx is None:
         train_data_raw, _ = load_data('train')
         word2idx = generateDict(train_data_raw)
     data_raw, labels_raw = load_data('test')
-    word2idx = generateDict(data_raw)
     data = create_tensors(data_raw, word2idx)
     labels = encode_labels(labels_raw)
     correct_guesses = 0
     val_bar = tqdm(total=len(data), leave=False)
     val_bar.set_description('testing')
+    preds = np.array([])
     for question, label in zip(data, labels):
         with torch.no_grad():
             out = model(question)
         correct_guesses += int(torch.argmax(out) == label)
+        preds = np.append(preds, torch.argmax(out))
         val_bar.update(1)
     val_bar.close()
+    # confusion matrix and save to file
+    conf_mat = metrics.confusion_matrix(labels, preds)
+    conf_mat = conf_mat.astype('float') / conf_mat.astype('float').sum(axis=1)
+    plt.figure()
+    cm_plot = sns.heatmap(conf_mat, annot=True, fmt='g', xticklabels=labels_encoding.keys(), yticklabels=labels_encoding.keys(), cmap='Blues', cbar_kws={'label': 'Proportion of Predictions'})
+    cm_plot.set(xlabel='Predicted Label', ylabel='True Label', )
+    cm_plot.set_title('Confusion Matrix for Test Classification')
+    fig = cm_plot.get_figure()
+    fig.savefig('output/confusion_matrix.png')
     return correct_guesses / len(data)
 
 def main(params):
 
-    model, word2idx = train(params)    
+    model, word2idx, train_acc, val_acc = train(params)    
     model = torch.load('output/model.torch')
     test_acc = test(model, word2idx)
     print("Testing accuracy: ", test_acc)
+    plot_acc(train_acc, val_acc, test_acc)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--embed_dim', type=int, default=150)
-    parser.add_argument('--hidden_dim', type=int, default=100)
-    parser.add_argument('--lr', type=float, default=0.005)
+    parser.add_argument('--embed_dim', type=int, default=100)
+    parser.add_argument('--hidden_dim', type=int, default=50)
+    parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--epochs', type=int, default=10)
     args = parser.parse_args()
     main(parser.parse_args())
