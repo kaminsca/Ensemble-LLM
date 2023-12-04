@@ -160,7 +160,18 @@ class ModelSelectorApp:
             4: 'CODE',
         }
         predicted_label = labels_encoding[predicted_index.item()]
-
+        if predicted_label == 'CONV':
+            predicted_label='CHATGPT'
+        elif predicted_label == 'SCIENCE':
+            predicted_label='Roberta'
+        elif predicted_label == 'MATH':
+            predicted_label='MATHGLM'
+        elif predicted_label == 'LAW':
+            predicted_label='CHATLAW'
+        elif predicted_label == 'CODE':
+            predicted_label='GITHUB-COPIOLET'
+        else:
+            predicted_label='UNKOWN'
         # Show the result in a message box
         result_message = f"The predicted model for this question is: {predicted_label}"
         messagebox.showinfo("Model Selection Result", result_message)
