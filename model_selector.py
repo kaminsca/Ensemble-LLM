@@ -115,17 +115,13 @@ def load_data(set):
     return data, labels
 
 class ModelSelectorApp:
-    def __init__(self, master, word2idx):
+    def __init__(self, master, model, word2idx):
         self.master = master
         self.master.title("Model Selector App")
-        self.word2idx = word2idx  # Make word2idx an attribute
-
-        # Load the trained model
-        model_path = 'output/model.torch'  # Replace with the actual path
-        self.model = torch.load(model_path)
+        self.word2idx = word2idx
+        self.model = model
         self.model.eval()
 
-        # Create UI elements
         self.label = tk.Label(master, text="Enter your question:")
         self.label.pack(pady=10)
 
@@ -134,15 +130,16 @@ class ModelSelectorApp:
 
         self.button = tk.Button(master, text="Get Best Model", command=self.get_best_model)
         self.button.pack(pady=20)
-
+        
     def get_best_model(self):
-        # Get the user's question from the entry widget
         question = self.entry.get()
 
         # Convert question to input tensor
         tokenizer = get_tokenizer("basic_english")
         tokens = tokenizer(question)
+        #print("Tokens:", tokens)  # Add this line to inspect tokens
         input_tensor = torch.tensor([self.word2idx[token] if token in self.word2idx else self.word2idx["unka"] for token in tokens])
+
 
         # Forward pass
         with torch.no_grad():
@@ -161,20 +158,22 @@ class ModelSelectorApp:
         }
         predicted_label = labels_encoding[predicted_index.item()]
         if predicted_label == 'CONV':
-            predicted_label='CHATGPT'
+            predicted_label = 'CHATGPT'
         elif predicted_label == 'SCIENCE':
-            predicted_label='Roberta'
+            predicted_label = 'Roberta'
         elif predicted_label == 'MATH':
-            predicted_label='MATHGLM'
+            predicted_label = 'MATHGLM'
         elif predicted_label == 'LAW':
-            predicted_label='CHATLAW'
+            predicted_label = 'CHATLAW'
         elif predicted_label == 'CODE':
-            predicted_label='GITHUB-COPIOLET'
+            predicted_label = 'GITHUB-COPIOLET'
         else:
-            predicted_label='UNKOWN'
+            predicted_label = 'UNKNOWN'
+
         # Show the result in a message box
         result_message = f"The predicted model for this question is: {predicted_label}"
         messagebox.showinfo("Model Selection Result", result_message)
+
 
 def main():
     root = tk.Tk()
@@ -187,4 +186,16 @@ def main():
     root.mainloop()
 
 if __name__ == "__main__":
-    main()
+    # Load the data and generate word2idx
+    train_data_raw, _ = load_data('train')  # Assuming train data is available
+    word2idx = generateDict(train_data_raw)
+
+    # Load the trained model
+    model_path = 'output/model.torch'  # Replace with the actual path
+    trained_model = torch.load(model_path)
+    
+    # Create and run the Tkinter app
+    root = tk.Tk()
+    app = ModelSelectorApp(root, trained_model, word2idx)
+    root.mainloop()
+
