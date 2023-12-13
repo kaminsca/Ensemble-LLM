@@ -1,33 +1,87 @@
-Epoch 1 training accuracy: 0.6218
-Epoch 1 validation accuracy: 0.8707252000970167
+Epoch 1 training accuracy: 0.5610666666666667
+Epoch 1 validation accuracy: 0.8404074702886248
 saved model
 
-Epoch 2 training accuracy: 0.6988666666666666
-Epoch 2 validation accuracy: 0.6327916565607568
+Epoch 2 training accuracy: 0.6825333333333333
+Epoch 2 validation accuracy: 0.8357991753577492
 
-Epoch 3 training accuracy: 0.6236
-Epoch 3 validation accuracy: 0.6366723259762309
-
-Epoch 4 training accuracy: 0.653
-Epoch 4 validation accuracy: 0.8559301479505215
-
-Epoch 5 training accuracy: 0.7010666666666666
-Epoch 5 validation accuracy: 0.8915837982051904
+Epoch 3 training accuracy: 0.8297333333333333
+Epoch 3 validation accuracy: 0.9527043414989086
 saved model
 
-Epoch 6 training accuracy: 0.6133333333333333
-Epoch 6 validation accuracy: 0.47077370846471017
-
-Epoch 7 training accuracy: 0.6314
-Epoch 7 validation accuracy: 0.7647344166868785
-
-Epoch 8 training accuracy: 0.7817333333333333
-Epoch 8 validation accuracy: 0.6994906621392191
-
-Epoch 9 training accuracy: 0.6796
-Epoch 9 validation accuracy: 0.7581857870482658
-
-Epoch 10 training accuracy: 0.747
-Epoch 10 validation accuracy: 0.9027407227746786
+Epoch 4 training accuracy: 0.9026666666666666
+Epoch 4 validation accuracy: 0.9614358476837255
 saved model
+
+Epoch 5 training accuracy: 0.8296666666666667
+Epoch 5 validation accuracy: 0.9083191850594228
+
+Epoch 6 training accuracy: 0.8216666666666667
+Epoch 6 validation accuracy: 0.7783167596410381
+
+Epoch 7 training accuracy: 0.8399333333333333
+Epoch 7 validation accuracy: 0.9670143099684696
+saved model
+
+Epoch 8 training accuracy: 0.9383333333333334
+Epoch 8 validation accuracy: 0.969439728353141
+saved model
+
+Epoch 9 training accuracy: 0.7974666666666667
+Epoch 9 validation accuracy: 0.9616783895221925
+
+Epoch 10 training accuracy: 0.946
+Epoch 10 validation accuracy: 0.9725927722532137
+saved model
+
+Epoch 11 training accuracy: 0.9630666666666666
+Epoch 11 validation accuracy: 0.9747756487994179
+saved model
+
+Epoch 12 training accuracy: 0.9734
+Epoch 12 validation accuracy: 0.9815668202764977
+saved model
+
+Epoch 13 training accuracy: 0.9766666666666667
+Epoch 13 validation accuracy: 0.9791414018918263
+
+Epoch 14 training accuracy: 0.9814666666666667
+Epoch 14 validation accuracy: 0.9745331069609507
+
+Epoch 15 training accuracy: 0.9814666666666667
+Epoch 15 validation accuracy: 0.9835071549842348
+saved model
+
+Epoch 16 training accuracy: 0.9826666666666667
+Epoch 16 validation accuracy: 0.9832646131457676
+
+Epoch 17 training accuracy: 0.9841333333333333
+Epoch 17 validation accuracy: 0.9830220713073005
+
+Epoch 18 training accuracy: 0.9848
+Epoch 18 validation accuracy: 0.9835071549842348
+
+Epoch 19 training accuracy: 0.9856
+Epoch 19 validation accuracy: 0.9844773223381034
+saved model
+
+Epoch 20 training accuracy: 0.986
+Epoch 20 validation accuracy: 0.9847198641765704
+saved model
+
+Epoch 21 training accuracy: 0.9863333333333333
+Epoch 21 validation accuracy: 0.9852049478535048
+saved model
+
+Epoch 22 training accuracy: 0.9869333333333333
+Epoch 22 validation accuracy: 0.9849624060150376
+
+Epoch 23 training accuracy: 0.9872
+Epoch 23 validation accuracy: 0.9847198641765704
+
+Epoch 24 training accuracy: 0.9872666666666666
+Epoch 24 validation accuracy: 0.9847198641765704
+
+Epoch 25 training accuracy: 0.9874666666666667
+Epoch 25 validation accuracy: 0.9842347804996362
 

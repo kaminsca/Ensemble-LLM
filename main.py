@@ -11,6 +11,7 @@ from tqdm import tqdm
 import re
 import seaborn as sns
 import matplotlib.pyplot as plt
+import torch.optim as optim
 
 np.random.seed(42)
 delim = '%@%'
@@ -140,6 +141,7 @@ def train(params):
 
     model = RNN(args.embed_dim, args.hidden_dim, len(word2idx))
     OPTIMIZER = torch.optim.SGD(model.parameters(), lr=params.lr, weight_decay=0.001, momentum=0.9)
+    lr_scheduler = optim.lr_scheduler.StepLR(OPTIMIZER, step_size=1, gamma=0.75)
     model.embed(word2idx, params.embed_dim)
 
     validation_data, validation_labels = load_data('val')
@@ -182,6 +184,7 @@ def train(params):
             torch.save(model, 'output/model.torch')
             outfile.write('saved model\n')
         outfile.write('\n')
+        lr_scheduler.step()
     pbar_total.close()
     outfile.close()
 
@@ -268,6 +271,6 @@ if __name__ == '__main__':
     parser.add_argument('--embed_dim', type=int, default=100)
     parser.add_argument('--hidden_dim', type=int, default=50)
     parser.add_argument('--lr', type=float, default=0.01)
-    parser.add_argument('--epochs', type=int, default=10)
+    parser.add_argument('--epochs', type=int, default=25)
     args = parser.parse_args()
-    main(parser.parse_args())
+    main(args)
